@@ -13,6 +13,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent
 import android.view.View;
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_first_activity.*
 import kotlinx.android.synthetic.main.item.*
 import java.util.ArrayList;
@@ -21,6 +23,9 @@ import java.util.ArrayList;
 class First_activity : AppCompatActivity() {
 
     //private  var al: ArrayList<String>? =null
+    private lateinit var mAuth: FirebaseAuth
+
+   private lateinit var  al:ArrayList<String>
 
 
     private var i = 0
@@ -32,17 +37,22 @@ class First_activity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_first_activity)
 
-        val al=ArrayList<String>()
+        mAuth=FirebaseAuth.getInstance()
 
+        //val al=ArrayList<String>()
 
-        al?.add("php")
+        al=ArrayList()
+
+   /*     al?.add("php")
         al?.add("c")
         al?.add("python")
         al?.add("java")
         al?.add("html")
         al?.add("c++")
         al?.add("css")
-        al?.add("javascript")
+        al?.add("javascript")*/
+
+        getAll()
 
 
         arrayAdapter =  ArrayAdapter(this,R.layout.item,R.id.helloText,al!!)
@@ -71,10 +81,10 @@ class First_activity : AppCompatActivity() {
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
                 // Ask for more data here
-                al!!.add("XML $i")
+              /*  al!!.add("XML $i")
                 arrayAdapter!!.notifyDataSetChanged()
                 Log.d("LIST", "notified")
-                i++
+                i++ */
             }
 
             override fun onScroll(scrollProgressPercent: Float) {
@@ -102,6 +112,43 @@ class First_activity : AppCompatActivity() {
         Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show()
     }
 
+    fun signout(view: View) {
+        mAuth.signOut()
+        val i=Intent(this,MainActivity::class.java)
+        startActivity(i)
+        finish()
+        return
+    }
 
+    fun getAll(){
+        val currentUserDB: DatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users")
+        currentUserDB.addChildEventListener(object : ChildEventListener{
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                //Get All the name in the Users Tab
+                if (snapshot.exists()){
+                    al.add(snapshot.child("name").getValue().toString())
+                    arrayAdapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                TODO("Not yet implemented")
+            }
+
+        })//addChildEventListener
+
+    }//getAll
 
 }
