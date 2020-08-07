@@ -25,39 +25,41 @@ class First_activity : AppCompatActivity() {
     //private  var al: ArrayList<String>? =null
     private lateinit var mAuth: FirebaseAuth
 
-   private lateinit var  al:ArrayList<String>
+    private lateinit var al: ArrayList<String>
 
 
     private var i = 0
     lateinit var arrayAdapter: ArrayAdapter<String>
 
-    private lateinit var flingContainer:SwipeFlingAdapterView
+    private lateinit var flingContainer: SwipeFlingAdapterView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_first_activity)
 
-        mAuth=FirebaseAuth.getInstance()
+        mAuth = FirebaseAuth.getInstance()
 
         //val al=ArrayList<String>()
 
-        al=ArrayList()
+        //Inisialize the ArrayList as an empty as First
+        al = ArrayList()
 
-   /*     al?.add("php")
-        al?.add("c")
-        al?.add("python")
-        al?.add("java")
-        al?.add("html")
-        al?.add("c++")
-        al?.add("css")
-        al?.add("javascript")*/
+        /*     al?.add("php")
+             al?.add("c")
+             al?.add("python")
+             al?.add("java")
+             al?.add("html")
+             al?.add("c++")
+             al?.add("css")
+             al?.add("javascript") */
 
+        //Get All the name in the Users Tab
         getAll()
 
 
-        arrayAdapter =  ArrayAdapter(this,R.layout.item,R.id.helloText,al!!)
+        arrayAdapter = ArrayAdapter(this, R.layout.item, R.id.helloText, al!!)
 
-        flingContainer=frame
+        flingContainer = frame
 
         flingContainer.setAdapter(arrayAdapter)
         flingContainer.setFlingListener(object : onFlingListener {
@@ -81,10 +83,10 @@ class First_activity : AppCompatActivity() {
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
                 // Ask for more data here
-              /*  al!!.add("XML $i")
-                arrayAdapter!!.notifyDataSetChanged()
-                Log.d("LIST", "notified")
-                i++ */
+                /*  al!!.add("XML $i")
+                  arrayAdapter!!.notifyDataSetChanged()
+                  Log.d("LIST", "notified")
+                  i++ */
             }
 
             override fun onScroll(scrollProgressPercent: Float) {
@@ -93,8 +95,6 @@ class First_activity : AppCompatActivity() {
                 item_swipe_left_indicator.setAlpha(if (scrollProgressPercent > 0) scrollProgressPercent else 0F)
             }
         })
-
-
 
 
         // Optionally add an OnItemClickListener
@@ -112,17 +112,20 @@ class First_activity : AppCompatActivity() {
         Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show()
     }
 
+            //SignOut
     fun signout(view: View) {
         mAuth.signOut()
-        val i=Intent(this,MainActivity::class.java)
+        val i = Intent(this, MainActivity::class.java)
         startActivity(i)
         finish()
         return
     }
 
-    fun getAll(){
-        val currentUserDB: DatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users")
-        currentUserDB.addChildEventListener(object : ChildEventListener{
+
+    fun getAll() {
+        val currentUserDB: DatabaseReference =
+            FirebaseDatabase.getInstance().getReference().child("Users")
+        currentUserDB.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
@@ -137,7 +140,7 @@ class First_activity : AppCompatActivity() {
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 //Get All the name in the Users Tab
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
                     al.add(snapshot.child("name").getValue().toString())
                     arrayAdapter.notifyDataSetChanged()
                 }
